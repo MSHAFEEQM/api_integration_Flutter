@@ -36,6 +36,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    return Scaffold(body: Center(child: ElevatedButton(onPressed: (){}, child: Text('Get User Details'))),);
+    return Scaffold(appBar: AppBar(title: Center(child: Text('API Integration')),),body: Center(child: ElevatedButton(onPressed: (){}, child: Text('Get User Details'))),);
   }
 }
