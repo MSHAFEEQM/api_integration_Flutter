@@ -36,9 +36,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    return Scaffold(appBar: AppBar(
-        
-        title: Text(widget.title),
-      ),body: Center(child: ElevatedButton(onPressed: (){}, child: Text('Get User Details'))),);
+    return Scaffold(body: Center(child: ElevatedButton(onPressed: (){}, child: Text('Get User Details'))),);
   }
 }
