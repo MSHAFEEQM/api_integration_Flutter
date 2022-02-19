@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -6,36 +9,72 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomeScreen(title: 'API Integration'),
+    return const MaterialApp(
+      home: HomeScreen(),
     );
   }
 }
 
+List<User> users = [];
+
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({ Key? key,required this.title }) : super(key: key);
-  final String title;
+  const HomeScreen({Key? key}) : super(key: key);
+  Future getuserDetails() async {
+    final _response =
+        await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+    var data = jsonDecode(_response.body);
+
+    for (var u in data) {
+      User user = User(u["name"], u["email"], u["username"]);
+      users.add(user);
+    }
+
+    print(users.length);
+    return users;
+  }
 
   @override
   Widget build(BuildContext context) {
-    
-    return Scaffold(appBar: AppBar(title: Center(child: Text('API Integration')),),body: Center(child: ElevatedButton(onPressed: (){}, child: Text('Get User Details'))),);
+    return Scaffold(
+        appBar: AppBar(
+          title: Center(
+              child: Text(
+            "API Integration",
+            style: TextStyle(fontSize: 18, color: Colors.white),
+          )),
+        ),
+        body: Container(
+          child: Card(
+              child: FutureBuilder(
+            future: getuserDetails(),
+            builder: (context, snapshot) {
+              if (snapshot.data == null) {
+                return Container(
+                  child: const Center(
+                    child: Text('Loading...'),
+                  ),
+                );
+              } else {
+                return ListView.builder(
+                    itemCount: users.length,
+                    itemBuilder: (context, i) {
+                      return ListTile(
+                        title: Text(users[i].email),
+                        subtitle: Text(users[i].name),
+                        trailing: Text(users[i].userName),
+                      );
+                    });
+              }
+            },
+          )),
+        ));
   }
+}
+
+class User {
+  final String name, email, userName;
+
+  User(this.name, this.email, this.userName);
 }
